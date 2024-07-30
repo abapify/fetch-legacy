@@ -9,11 +9,12 @@ class ZCL_FETCH_LEGACY_DELEGATE definition
 public section.
 
   interfaces ZIF_THROW .
+  methods client redefinition.
 
   aliases THROW
     for ZIF_THROW~THROW .
   protected section.
-    methods client redefinition.
+
   private section.
 
 ENDCLASS.

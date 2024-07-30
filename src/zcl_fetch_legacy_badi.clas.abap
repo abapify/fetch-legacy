@@ -5,10 +5,10 @@ class ZCL_FETCH_LEGACY_BADI definition
   create public .
 
 public section.
-  protected section.
+protected section.
 
-    methods delegate redefinition.
-
+  methods DELEGATE
+    redefinition .
   private section.
 
 ENDCLASS.

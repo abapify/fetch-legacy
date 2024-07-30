@@ -7,8 +7,6 @@ class ZCL_FETCH_LEGACY_REQUEST definition
 
 public section.
 
-  interfaces ZIF_FETCH_ENTITY .
-  interfaces ZIF_FETCH_REQUEST .
   interfaces ZIF_FETCH_REQUEST_SETTER .
 
   types http_request_type type ref to IF_HTTP_REQUEST.
@@ -37,12 +35,6 @@ CLASS ZCL_FETCH_LEGACY_REQUEST IMPLEMENTATION.
     me->http_request->set_data( body ).
   endmethod.
 
-
-  method ZIF_FETCH_REQUEST_SETTER~DESTINATION.
-    " do nothing here
-  endmethod.
-
-
   method ZIF_FETCH_REQUEST_SETTER~HEADERS.
 
     loop at headers into data(ls_header).
@@ -59,7 +51,6 @@ CLASS ZCL_FETCH_LEGACY_REQUEST IMPLEMENTATION.
 
 
   method ZIF_FETCH_REQUEST_SETTER~METHOD.
-    me->zif_fetch_request~method = method.
     me->http_request->set_method( method ).
   endmethod.
 
@@ -80,4 +71,58 @@ CLASS ZCL_FETCH_LEGACY_REQUEST IMPLEMENTATION.
 
     endif.
   endmethod.
+  METHOD zif_fetch_request~path.
+
+    result = me->zif_fetch_entity_readable~header(  '~request_uri' ).
+
+  ENDMETHOD.
+
+  METHOD zif_fetch_request~method.
+    result = me->http_request->get_method( ).
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_readable~body.
+    result = me->http_request->get_data( ).
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_readable~text.
+    result = me->http_request->get_cdata( ).
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_readable~headers.
+
+    data lt_headers type TIHTTPNVP.
+
+    me->http_request->get_header_fields(
+      changing
+        fields = lt_headers     " Header fields
+    ).
+
+    headers = corresponding #(  lt_headers ).
+
+
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_readable~header.
+
+    value = me->http_request->get_header_field( name ).
+
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_writeable~text.
+
+    me->http_request->set_cdata( text ).
+
+  ENDMETHOD.
+
+  METHOD zif_fetch_entity_writeable~header.
+
+    me->http_request->set_header_field(
+      exporting
+        name  = name    " Name of the header field
+        value = value    " HTTP header field value
+    ).
+
+  ENDMETHOD.
+
 ENDCLASS.
