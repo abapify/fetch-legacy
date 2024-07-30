@@ -1,36 +1,36 @@
-class ZCL_FETCH_LEGACY_CLIENT definition
+class zcl_fetch_legacy_client definition
   public
   final
   create private
 
-  global friends ZCL_FETCH_LEGACY_DELEGATE .
+  global friends zcl_fetch_legacy_delegate .
 
-public section.
+  public section.
 
-  interfaces ZIF_FETCH_CLIENT .
-  interfaces ZIF_THROW .
+    interfaces zif_fetch_client .
+    interfaces zif_throw .
 
-  types HTTP_CLIENT_TYPE type ref to IF_HTTP_CLIENT .
+    types http_client_type type ref to if_http_client .
 
-  methods CONSTRUCTOR
-    importing
-      !HTTP_CLIENT type HTTP_CLIENT_TYPE .
-protected section.
-private section.
+    methods constructor
+      importing
+        !http_client type http_client_type .
+  protected section.
+  private section.
 
-  aliases THROW
-    for ZIF_THROW~THROW .
+    aliases throw
+      for zif_throw~throw .
 
-  data HTTP_CLIENT type HTTP_CLIENT_TYPE .
-  data rest_client type ref to if_rest_client.
-ENDCLASS.
-
-
-
-CLASS ZCL_FETCH_LEGACY_CLIENT IMPLEMENTATION.
+    data http_client type http_client_type .
+    data rest_client type ref to if_rest_client.
+endclass.
 
 
-  method CONSTRUCTOR.
+
+class zcl_fetch_legacy_client implementation.
+
+
+  method constructor.
     assert http_client is bound.
     super->constructor( ).
     me->http_client = http_client.
@@ -39,12 +39,27 @@ CLASS ZCL_FETCH_LEGACY_CLIENT IMPLEMENTATION.
   endmethod.
 
 
-  method ZIF_FETCH_CLIENT~FETCH.
+  method zif_fetch_client~fetch.
 
     data(method) = me->http_client->request->get_method( ).
 
+    data(app) = me->rest_client.
+
     " trigger HTTP method
-    call method me->rest_client->(method).
+    case request->method( ).
+      when 'HEAD'.
+        app->head( ).
+      when 'GET'.
+        app->get( ).
+      when 'DELETE'.
+        app->delete( ).
+      when 'OPTIONS'.
+        app->options( ).
+      when 'POST'.
+        app->post( io_entity = cast zif_fetch_rest_entity(  request )->rest_entity ).
+      when 'PUT'.
+        app->put( io_entity = cast zif_fetch_rest_entity(  request )->rest_entity ).
+    endcase.
 
     response = new zcl_fetch_legacy_response(
         rest_response = me->rest_client->get_response_entity( )
@@ -56,14 +71,17 @@ CLASS ZCL_FETCH_LEGACY_CLIENT IMPLEMENTATION.
   endmethod.
 
 
-  method ZIF_FETCH_CLIENT~REQUEST.
-    result = new zcl_fetch_legacy_request( me->http_client->request ).
+  method zif_fetch_client~request.
+
+    data(lo_rest_request) = me->rest_client->create_request_entity( ).
+
+    result = new zcl_fetch_legacy_request( lo_rest_request ).
   endmethod.
 
 
-  method ZIF_THROW~THROW.
+  method zif_throw~throw.
 
-     new zcl_throw( )->throw( message ).
+    new zcl_throw( )->throw( message ).
 
   endmethod.
-ENDCLASS.
+endclass.

@@ -13,10 +13,7 @@ protected section.
 
 ENDCLASS.
 
-
-
 CLASS ZCL_FETCH_LEGACY_BADI IMPLEMENTATION.
-
 
   method DELEGATE.
     result = new zcl_fetch_legacy_delegate( destination = destination ).
