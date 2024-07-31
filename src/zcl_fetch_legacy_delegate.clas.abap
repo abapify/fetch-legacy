@@ -28,7 +28,7 @@ CLASS ZCL_FETCH_LEGACY_DELEGATE IMPLEMENTATION.
 
     case destination->type.
 
-      when destination->destination_types-url.
+      when zif_fetch_destination_types=>destination_types-url.
 
         data(lo_url_dest) = cast zif_fetch_destination_url( destination ).
 
@@ -48,7 +48,7 @@ CLASS ZCL_FETCH_LEGACY_DELEGATE IMPLEMENTATION.
           throw( ).
         endif.
 
-      when destination->destination_types-rfc.
+      when zif_fetch_destination_types=>destination_types-rfc.
 
         data(lo_rfc_dest) = cast zif_fetch_destination_rfc( destination ).
 

@@ -32,10 +32,47 @@ CLASS ZCL_FETCH_LEGACY_REQUEST IMPLEMENTATION.
   endmethod.
 
 
+  METHOD zif_fetch_entity_readable~body.
+    result = me->request->get_binary_data( ).
+  ENDMETHOD.
+
+
+  METHOD zif_fetch_entity_readable~header.
+    value = me->request->get_header_field( name ).
+  ENDMETHOD.
+
+
+  METHOD zif_fetch_entity_readable~headers.
+    headers = corresponding #(  me->request->get_header_fields( ) ).
+  ENDMETHOD.
+
+
+  METHOD zif_fetch_entity_readable~text.
+    result = me->request->get_string_data( ).
+  ENDMETHOD.
+
+
+  METHOD zif_fetch_entity_writeable~header.
+
+    me->request->set_header_field(
+      exporting
+        iv_name  = name    " Name of the header field
+        iv_value = value    " HTTP header field value
+    ).
+
+  ENDMETHOD.
+
+
+  METHOD zif_fetch_entity_writeable~text.
+    me->request->set_string_data( iv_data = text ).
+  ENDMETHOD.
+
+
   method ZIF_FETCH_REQUEST_SETTER~BODY.
     check body is not initial.
     me->request->set_binary_data( iv_data = body ).
   endmethod.
+
 
   method ZIF_FETCH_REQUEST_SETTER~HEADERS.
 
@@ -68,49 +105,21 @@ CLASS ZCL_FETCH_LEGACY_REQUEST IMPLEMENTATION.
       me->zif_fetch_request_setter~header(
         exporting
           name  = '~request_uri'
-          value = path
+          value = resolved_path
       ).
 
     endif.
   endmethod.
-  METHOD zif_fetch_request~path.
 
-    result = me->zif_fetch_entity_readable~header(  '~request_uri' ).
-
-  ENDMETHOD.
 
   METHOD zif_fetch_request~method.
     result = me->method.
   ENDMETHOD.
 
-  METHOD zif_fetch_entity_readable~body.
-    result = me->request->get_binary_data( ).
-  ENDMETHOD.
 
-  METHOD zif_fetch_entity_readable~text.
-    result = me->request->get_string_data( ).
-  ENDMETHOD.
+  METHOD zif_fetch_request~path.
 
-  METHOD zif_fetch_entity_readable~headers.
-    headers = corresponding #(  me->request->get_header_fields( ) ).
-  ENDMETHOD.
-
-  METHOD zif_fetch_entity_readable~header.
-    value = me->request->get_header_field( name ).
-  ENDMETHOD.
-
-  METHOD zif_fetch_entity_writeable~text.
-    me->request->set_string_data( iv_data = text ).
-  ENDMETHOD.
-
-  METHOD zif_fetch_entity_writeable~header.
-
-    me->request->set_header_field(
-      exporting
-        iv_name  = name    " Name of the header field
-        iv_value = value    " HTTP header field value
-    ).
+    result = me->zif_fetch_entity_readable~header(  '~request_uri' ).
 
   ENDMETHOD.
-
 ENDCLASS.
