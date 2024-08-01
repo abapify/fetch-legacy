@@ -76,6 +76,11 @@ class zcl_fetch_legacy_client implementation.
     data(lo_rest_request) = me->rest_client->create_request_entity( ).
 
     result = new zcl_fetch_legacy_request( lo_rest_request ).
+
+    raise event zif_fetch_client~request_created
+      exporting
+        request =  result
+    .
   endmethod.
 
 
