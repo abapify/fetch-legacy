@@ -23,11 +23,11 @@ class zcl_fetch_legacy_client definition
 
     data http_client type http_client_type .
     data rest_client type ref to if_rest_client.
-endclass.
+ENDCLASS.
 
 
 
-class zcl_fetch_legacy_client implementation.
+CLASS ZCL_FETCH_LEGACY_CLIENT IMPLEMENTATION.
 
 
   method constructor.
@@ -86,7 +86,7 @@ class zcl_fetch_legacy_client implementation.
 
   method zif_throw~throw.
 
-    new zcl_throw( )->throw( message ).
-
+*    new zcl_throw( )->throw( message ).
+     new zcl_throw( )->throw( object ).
   endmethod.
-endclass.
+ENDCLASS.
